@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "716050785665",
+    "firebase_url": "https://alerttrader-2a570.firebaseio.com",
+    "project_id": "alerttrader-2a570",
+    "storage_bucket": "alerttrader-2a570.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:716050785665:android:d992534ed77b6d0a",
+        "android_client_info": {
+          "package_name": "com.at.alerttrader"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "716050785665-bpm4gcknaqsuo7q3ngga9t5q77mmfvl5.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.at.alerttrader",
+            "certificate_hash": "70bac6bb0616f397acb0235188557516c8cf4dc5"
+          }
+        },
+        {
+          "client_id": "716050785665-u9no4kc9df2k4h9o9r37bpdq6hkqfoul.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDY-_V49dIS5aUvysovZAav8-07G8gzKMA"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "716050785665-u9no4kc9df2k4h9o9r37bpdq6hkqfoul.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
