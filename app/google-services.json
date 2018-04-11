@@ -15,6 +15,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "716050785665-u3n0pmapsf1ev2k4idquldf9phkjcg4l.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.at.alerttrader",
+            "certificate_hash": "3fbc4a2cb541ed33e306b160654e8c3e237834e5"
+          }
+        },
+        {
           "client_id": "716050785665-bpm4gcknaqsuo7q3ngga9t5q77mmfvl5.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {

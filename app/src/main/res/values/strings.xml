@@ -3,7 +3,7 @@
     <string name="loading">Loading...</string>
     <string name="title_activity_msg_list">Market Live News</string>
     <string name="android_key">AIzaSyDY-_V49dIS5aUvysovZAav8-07G8gzKMA</string>
-    <string name="web_client_id">716050785665-u9no4kc9df2k4h9o9r37bpdq6hkqfoul.apps.googleusercontent.com</string>
+    <string name="server_client_id">716050785665-u9no4kc9df2k4h9o9r37bpdq6hkqfoul.apps.googleusercontent.com</string>
     <string name="android_client_id">716050785665-bpm4gcknaqsuo7q3ngga9t5q77mmfvl5.apps.googleusercontent.com</string>
     <string name="default_notification_channel_id" translatable="false">fcm_default_channel</string>
     <string name="large_text">

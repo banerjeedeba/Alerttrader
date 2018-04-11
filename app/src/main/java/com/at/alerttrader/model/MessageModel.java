@@ -11,6 +11,10 @@ public class MessageModel {
     private String messageText;
     private String messageTime;
 
+    public MessageModel() {
+
+    }
+
     public MessageModel(String messageText, String messageTime) {
         this.messageText = messageText;
         this.messageTime = messageTime;

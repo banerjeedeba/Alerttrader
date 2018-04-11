@@ -11,6 +11,8 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.at.alerttrader.model.User;
+import com.at.alerttrader.util.DateUtil;
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
@@ -27,7 +29,14 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QueryListenOptions;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.messaging.FirebaseMessaging;
+
+import java.util.Date;
 
 public class SplashActivity extends BaseActivity implements GoogleApiClient.OnConnectionFailedListener{
 
@@ -50,12 +59,13 @@ public class SplashActivity extends BaseActivity implements GoogleApiClient.OnCo
         btnGoogleSignIn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                Log.d(TAG, "sign in button click ");
                 signIn(view);
             }
         });
         btnSignOut = findViewById(R.id.btn_sign_out);
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                .requestIdToken(getString(R.string.web_client_id))
+                .requestIdToken(getString(R.string.default_web_client_id))
                 .requestEmail()
                 .build();
 
@@ -67,10 +77,10 @@ public class SplashActivity extends BaseActivity implements GoogleApiClient.OnCo
                 //Log.d(TAG, "mGoogleSignInClient: " + (gso.getAccount().get));
         //FirebaseApp.initializeApp(this);
         mAuth = FirebaseAuth.getInstance();
-
+        db = FirebaseFirestore.getInstance();
         Intent i = getIntent();
         String message = i.getStringExtra("message");
-        Log.d(TAG, "message received: " + message);
+        Log.d(TAG, "message received:: " + message);
         if(message!=null && message.trim().length()>0){
             messageText = message;
             Log.d(TAG, "message set: " + messageText);
@@ -82,9 +92,9 @@ public class SplashActivity extends BaseActivity implements GoogleApiClient.OnCo
         Log.d(TAG, "signIn");
         Intent signInIntent = mGoogleSignInClient.getSignInIntent();
         //Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(mGoogleApiClient);
-        Log.d(TAG, "signIn Intent"+(signInIntent!=null));
-        startActivityForResult(signInIntent, RC_SIGN_IN);
-        Log.d(TAG, "signIn startActivityForResult");
+        //Log.d(TAG, "signIn Intent"+(signInIntent!=null));
+        SplashActivity.this.startActivityForResult(signInIntent, RC_SIGN_IN);
+        //Log.d(TAG, "signIn startActivityForResult");
     }
 
     public void signOut(View v) {
@@ -117,8 +127,64 @@ public class SplashActivity extends BaseActivity implements GoogleApiClient.OnCo
 
     }
 
+    private void updateUserDB(final FirebaseUser fbuser){
+        Toast.makeText(SplashActivity.this, "user: "+ fbuser.getUid(),
+                Toast.LENGTH_SHORT).show();
+        Log.d(TAG, "user: "+ fbuser.getUid() );
+        db.collection("Users")
+                .whereEqualTo("id", fbuser.getUid())
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful()) {
+                            if(task.getResult().size()>0){
+                                //User already exist
+                                Toast.makeText(SplashActivity.this, "task size: "+ task.getResult().size(),
+                                        Toast.LENGTH_SHORT).show();
+                                Log.d(TAG, "task size: "+ task.getResult().size() );
+                                for(QueryDocumentSnapshot document : task.getResult()) {
+                                    user = document.toObject(User.class);
+                                    switch (user.getStatus()){
+                                        case User.STATUS_APPROVED:
+                                            //Approved users
+                                            updateUI(fbuser);
+                                            break;
+                                        case User.STATUS_EXPIRED:
+                                            //Register page
+                                            updateUI(fbuser);
+                                            break;
+                                        case User.STATUS_PENDING:
+                                            //Pending approval page
+                                    }
+
+                                }
+                            } else {
+                                //Insert new User
+                                User user = new User();
+                                user.setEmail(fbuser.getEmail());
+                                user.setDisplayName(fbuser.getDisplayName());
+                                user.setId(fbuser.getUid());
+                                user.setLastLogin(DateUtil.dateToString(new Date(),null));
+                                user.setStatus(User.STATUS_EXPIRED);
+                                db.collection("Users").document(fbuser.getUid()).set(user);
+                                Log.d(TAG, "user: "+fbuser.getUid()+" email: "+fbuser.getEmail()+" name: "+fbuser.getDisplayName());
+                                //Register page
+                                updateUI(fbuser);
+                            }
+
+                        } else {
+                            Log.d(TAG, "Error getting documents: ", task.getException());
+                        }
+                    }
+                });
+    }
+
+
+
     private void updateUI(FirebaseUser user) {
         hideProgressDialog();
+        Log.d(TAG, "updateUI");
         if (user != null) {
             btnGoogleSignIn.setVisibility(View.GONE);
             //btnSignOut.setVisibility(View.VISIBLE);
@@ -197,7 +263,8 @@ public class SplashActivity extends BaseActivity implements GoogleApiClient.OnCo
                             // Sign in success, update UI with the signed-in user's information
                             Log.d(TAG, "signInWithCredential:success");
                             FirebaseUser user = mAuth.getCurrentUser();
-                            updateUI(user);
+                            //updateUI(user);
+                            updateUserDB(user);
                         } else {
                             // If sign in fails, display a message to the user.
                             Log.w(TAG, "signInWithCredential:failure", task.getException());

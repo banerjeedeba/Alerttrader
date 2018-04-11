@@ -10,9 +10,11 @@ import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 
+import com.at.alerttrader.model.User;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 public class BaseActivity extends AppCompatActivity {
 
@@ -21,6 +23,8 @@ public class BaseActivity extends AppCompatActivity {
     protected FirebaseAuth mAuth;
     protected GoogleSignInClient mGoogleSignInClient;
     protected GoogleApiClient mGoogleApiClient;
+    protected FirebaseFirestore db;
+    protected User user;
     public void showProgressDialog() {
         if (mProgressDialog == null) {
             mProgressDialog = new ProgressDialog(this);
